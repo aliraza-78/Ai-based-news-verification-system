@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://news-verification-server.onrender.com'
 
 interface RequestOptions extends RequestInit {
   requireAuth?: boolean
