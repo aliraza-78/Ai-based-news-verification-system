@@ -72,13 +72,13 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     ...options.headers
   }
 
-  if (requireAuth) {
-    let token = getAccessToken()
+  let token = getAccessToken()
 
-    if (!token) {
-      throw new APIError('Authentication required', 401)
-    }
+  if (requireAuth && !token) {
+    throw new APIError('Authentication required', 401)
+  }
 
+  if (token) {
     ; (headers as any)['Authorization'] = `Bearer ${token}`
   }
 
