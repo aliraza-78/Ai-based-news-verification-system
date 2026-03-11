@@ -209,7 +209,7 @@ export const authAPI = {
 
 // Prediction API
 export const predictAPI = {
-  analyze: async (data: { text?: string; url?: string }) => {
+  analyze: async (data: { text?: string; url?: string; category?: string | null }) => {
     return request<{
       verification_id: number
       label: 'Real' | 'Fake'
@@ -265,7 +265,7 @@ export const predictAPI = {
     })
   },
 
-  analyzePublic: async (data: { text?: string; url?: string }) => {
+  analyzePublic: async (data: { text?: string; url?: string; category?: string | null }) => {
     return request<{
       label: 'Real' | 'Fake'
       confidence: number

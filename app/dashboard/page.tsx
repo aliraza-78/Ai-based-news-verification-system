@@ -17,6 +17,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { historyAPI } from "@/lib/api"
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -35,29 +36,18 @@ export default function DashboardPage() {
         }
 
         setUser(JSON.parse(storedUser))
-        fetchDashboardData(token)
+        fetchDashboardData()
     }, [router])
 
-    const fetchDashboardData = async (token: string) => {
+    const fetchDashboardData = async () => {
         try {
-            const [historyRes, statsRes] = await Promise.all([
-                fetch("http://localhost:8000/api/history?limit=5", {
-                    headers: { "Authorization": `Bearer ${token}` }
-                }),
-                fetch("http://localhost:8000/api/history/stats", {
-                    headers: { "Authorization": `Bearer ${token}` }
-                })
+            const [historyData, statsData] = await Promise.all([
+                historyAPI.getHistory(5, 0),
+                historyAPI.getStats()
             ])
 
-            if (historyRes.ok) {
-                const historyData = await historyRes.json()
-                setHistory(historyData.items || [])
-            }
-
-            if (statsRes.ok) {
-                const statsData = await statsRes.json()
-                setStats(statsData)
-            }
+            setHistory(historyData.items || [])
+            setStats(statsData)
         } catch (err) {
             console.error("Failed to fetch dashboard data:", err)
         } finally {

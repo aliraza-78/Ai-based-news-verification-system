@@ -9,6 +9,7 @@ import { AlertCircle, CheckCircle, Loader2, Info, Timer, Zap, Cpu, Search } from
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { predictAPI } from "@/lib/api"
 
 const CATEGORIES = ["News", "Sports", "Education", "Politics", "Technology", "Health", "Business", "Entertainment"]
 
@@ -34,26 +35,9 @@ export function NewsVerificationForm() {
     setResult(null)
 
     try {
-      const url = token ? "/api/predict" : "/predict"
-      const headers: any = {
-        "Content-Type": "application/json",
-      }
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`
-      }
-
-      const response = await fetch(`http://localhost:8000${url}`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ text, category }),
-      })
-
-      if (!response.ok) {
-        const errData = await response.json()
-        throw new Error(errData.error || "Failed to analyze news")
-      }
-
-      const data = await response.json()
+      const data = token
+        ? await predictAPI.analyze({ text, category })
+        : await predictAPI.analyzePublic({ text, category })
       setResult(data)
     } catch (err: any) {
       setError(err.message || "Something went wrong")
