@@ -48,8 +48,16 @@ export default function DashboardPage() {
 
             setHistory(historyData.items || [])
             setStats(statsData)
-        } catch (err) {
-            console.error("Failed to fetch dashboard data:", err)
+        } catch (err: any) {
+            // If auth is invalid (e.g. "User not found"), clear local auth and send user to login
+            if (err?.status === 401) {
+                localStorage.removeItem("access_token")
+                localStorage.removeItem("refresh_token")
+                localStorage.removeItem("user")
+                router.push("/login")
+            } else {
+                console.error("Failed to fetch dashboard data:", err)
+            }
         } finally {
             setLoading(false)
         }

@@ -36,7 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null)
       }
     } catch {
+      // Token is likely invalid or user no longer exists – clear auth state
       setUser(null)
+      authAPI.clearUser()
     }
   }, [])
 

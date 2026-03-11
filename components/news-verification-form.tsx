@@ -9,7 +9,7 @@ import { AlertCircle, CheckCircle, Loader2, Info, Timer, Zap, Cpu, Search } from
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { predictAPI } from "@/lib/api"
+import { predictAPI, authAPI, APIError } from "@/lib/api"
 
 const CATEGORIES = ["News", "Sports", "Education", "Politics", "Technology", "Health", "Business", "Entertainment"]
 
@@ -35,9 +35,26 @@ export function NewsVerificationForm() {
     setResult(null)
 
     try {
-      const data = token
-        ? await predictAPI.analyze({ text, category })
-        : await predictAPI.analyzePublic({ text, category })
+      let data
+
+      if (token) {
+        try {
+          // Try authenticated analysis first so we can save history, etc.
+          data = await predictAPI.analyze({ text, category })
+        } catch (err: any) {
+          // If backend says user/token is invalid, clear auth and fall back to public endpoint
+          if (err instanceof APIError && err.status === 401) {
+            authAPI.clearUser()
+            setToken(null)
+            data = await predictAPI.analyzePublic({ text, category })
+          } else {
+            throw err
+          }
+        }
+      } else {
+        data = await predictAPI.analyzePublic({ text, category })
+      }
+
       setResult(data)
     } catch (err: any) {
       setError(err.message || "Something went wrong")
