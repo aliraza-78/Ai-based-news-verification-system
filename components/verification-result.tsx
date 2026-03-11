@@ -82,7 +82,7 @@ export function VerificationResult({ result }: VerificationResultProps) {
                 <Progress
                   value={credibilityScore}
                   className="h-2"
-                  indicatorClassName={credibilityScore >= 70 ? "bg-success" : "bg-destructive"}
+                indicatorClassName={credibilityScore >= 70 ? "bg-success" : "bg-destructive"}
                 />
               </div>
             </div>
